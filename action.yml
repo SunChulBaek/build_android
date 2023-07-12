@@ -1,0 +1,140 @@
+name: "Build Android"
+description: "안드로이드 빌드, 아티팩트 업로드, 슬랙으로 결과 전송"
+inputs:
+  java-distribution:
+    description: "java distribution"
+    required: true
+  java-version:
+    description: "java version"
+    required: true
+  base64-keystore:
+    description: "base64 keystore"
+    required: true
+  keystore-location:
+    description: "keystore location"
+    required: false
+    default: "keystore"
+  keystore:
+    description: "keystore"
+    required: false
+    default: "keystore"
+  keystore-properties:
+    description: "keystore properties"
+    required: false
+    default: "keystore.properties"
+  release-key-alias:
+    description: "releaseKeyAlias"
+    required: true
+  release-key-password:
+    description: "releaseKeyPassword"
+    required: true
+  release-store-password:
+    description: "releaseStorePassword"
+    required: true
+  revision:
+    description: "revision"
+    required: false
+    default: "release"
+  format:
+    description: "format"
+    required: false
+    default: "plain"
+  build-properties:
+    description: "build properties"
+    required: false
+    default: "build.properties"
+  application-id:
+    description: "application id"
+    required: true
+  compile-sdk:
+    description: "compile sdk"
+    required: true
+  min-sdk:
+    description: "compile sdk"
+    required: true
+  target-sdk:
+    description: "compile sdk"
+    required: true
+  version-code:
+    description: "version code"
+    required: false
+    default: "1"
+  version-name:
+    description: "version name"
+    required: false
+    default: "1.0.0"
+  version-number:
+    description: "version number"
+    required: false
+    default: ${{ github.run_number }}
+  slack-token:
+    description: "slack token"
+    required: true
+  slack-webhook-url:
+    description: "slack webhook url"
+    required: true
+  slack-channel-id:
+    description: "slack channel id"
+    required: true
+  apk-path:
+    description: "apk path"
+    required: false
+    default: "app/build/outputs/apk/release"
+  apk-name:
+    description: "apk name"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        distribution: ${{ inputs.java-distribution }}
+        java-version: ${{ inputs.java-version }}
+        cache: "gradle"
+    - uses: android-actions/setup-android@v2
+    - run: sudo chmod +x ./gradlew
+      shell: bash
+    - run: |
+        echo ${{ inputs.base64-keystore }} | base64 -d > ${{ inputs.keystore-location }}
+      shell: bash
+    - run: |
+        echo "releaseKeyAlias=${{ inputs.release-key-alias }}" > ${{ inputs.keystore-properties }}
+        echo "releaseKeyPassword=${{ inputs.release-key-password }}" >> ${{ inputs.keystore-properties }}
+        echo "releaseKeyStore=${{ inputs.keystore }}" >> ${{ inputs.keystore-properties }}
+        echo "releaseStorePassword=${{ inputs.release-store-password }}" >> ${{ inputs.keystore-properties }}
+      shell: bash
+    - run: ./gradlew androidDependencies
+      shell: bash
+    - run: ./gradlew dependencyUpdates -Drevision=${{ inputs.revision }} -DoutputFormatter=${{ inputs.format }}
+      shell: bash
+    - run: |
+        echo applicationId=${{ inputs.application-id }} > ${{ inputs.build-properties }}
+        echo compileSdk=${{ inputs.compile-sdk }} >> ${{ inputs.build-properties }}
+        echo minSdk=${{ inputs.min-sdk }} >> ${{ inputs.build-properties }}
+        echo targetSdk=${{ inputs.target-sdk }} >> ${{ inputs.build-properties }}
+        echo versionCode=${{ inputs.version-code }} >> ${{ inputs.build-properties }}
+        echo versionName=${{ inputs.version-name }} >> ${{ inputs.build-properties }}
+      shell: bash
+    - run: ./gradlew assembleRelease
+      shell: bash
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,ref # repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest # selectable (default: repo,message)
+      env:
+        SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }}
+      if: always()
+    - name: Change File Name
+      run: mv ${{ inputs.apk-path }}/app-release.apk ${{ inputs.apk-path }}/${{ inputs.apk-name }}
+      shell: bash
+    - uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.apk-name }}
+        path: ${{ inputs.apk-path }}/*.apk
+    - name: Slack Upload Artifacts
+      uses: MeilCli/slack-upload-file@v3
+      with:
+        slack_token: ${{ inputs.slack-token }}
+        channel_id: ${{ inputs.slack-channel-id }}
+        file_path: '${{ inputs.apk-path }}/${{ inputs.apk-name }}'
