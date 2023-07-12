@@ -63,10 +63,6 @@ inputs:
     description: "version name"
     required: false
     default: "1.0.0"
-  version-number:
-    description: "version number"
-    required: false
-    default: ${{ github.run_number }}
   slack-token:
     description: "slack token"
     required: true
