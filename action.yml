@@ -119,7 +119,17 @@ runs:
         echo versionCode=${{ inputs.version-code }} >> ${{ inputs.build-properties }}
         echo versionName=${{ inputs.version-name }} >> ${{ inputs.build-properties }}
       shell: bash
-    - run: ./gradlew assembleRelease bundleRelease
+    - run: ./gradlew assembleRelease
+      shell: bash
+    - name: Change APK File Name
+      run: |
+        mv ${{ inputs.apk-path }}/app-release.apk archive/${{ inputs.apk-name }}
+      shell: bash
+    - run: ./gradlew bundleRelease
+      shell: bash
+    - name: Change File Name
+      run: |
+        mv ${{ inputs.aab-path }}/app-release.apk archive/${{ inputs.aab-name }}
       shell: bash
     - uses: 8398a7/action-slack@v3
       with:
@@ -128,28 +138,13 @@ runs:
       env:
         SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }}
       if: always()
-    - name: Change File Name
-      run: |
-        mv ${{ inputs.apk-path }}/app-release.apk ${{ inputs.apk-path }}/${{ inputs.apk-name }}
-        mv ${{ inputs.aab-path }}/app-release.apk ${{ inputs.aab-path }}/${{ inputs.aab-name }}
-      shell: bash
     - uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.apk-name }}
-        path: ${{ inputs.apk-path }}/*.apk
-    - uses: actions/upload-artifact@v3
-      with:
-        name: ${{ inputs.aab-name }}
-        path: ${{ inputs.aab-path }}/*.apk
+        path: archive/*.*
     - name: Slack Upload Artifacts
       uses: MeilCli/slack-upload-file@v3
       with:
         slack_token: ${{ inputs.slack-token }}
         channel_id: ${{ inputs.slack-channel-id }}
-        file_path: '${{ inputs.apk-path }}/${{ inputs.apk-name }}'
-    - name: Slack Upload Artifacts
-      uses: MeilCli/slack-upload-file@v3
-      with:
-        slack_token: ${{ inputs.slack-token }}
-        channel_id: ${{ inputs.slack-channel-id }}
-        file_path: '${{ inputs.aab-path }}/${{ inputs.aab-name }}'
+        file_path: 'archive/*.*'
