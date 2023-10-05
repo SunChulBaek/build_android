@@ -79,7 +79,7 @@ inputs:
   aab-path:
     description: "aab path"
     required: false
-    default: "app/build/outputs/apk/release"
+    default: "app/build/outputs/bundle/release"
   apk-name:
     description: "apk name"
     required: true
@@ -119,16 +119,11 @@ runs:
         echo versionCode=${{ inputs.version-code }} >> ${{ inputs.build-properties }}
         echo versionName=${{ inputs.version-name }} >> ${{ inputs.build-properties }}
       shell: bash
-    - run: ./gradlew assembleRelease
-      shell: bash
-    - name: Change APK File Name
-      run: |
-        mv ${{ inputs.apk-path }}/app-release.apk archive/${{ inputs.apk-name }}
-      shell: bash
-    - run: ./gradlew bundleRelease
+    - run: ./gradlew assembleRelease bundleRelease
       shell: bash
     - name: Change File Name
       run: |
+        mv ${{ inputs.apk-path }}/app-release.apk archive/${{ inputs.apk-name }}
         mv ${{ inputs.aab-path }}/app-release.apk archive/${{ inputs.aab-name }}
       shell: bash
     - uses: 8398a7/action-slack@v3
