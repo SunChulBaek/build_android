@@ -121,11 +121,6 @@ runs:
       shell: bash
     - run: ./gradlew assembleRelease bundleRelease
       shell: bash
-    - name: Change File Name
-      run: |
-        mv ${{ inputs.apk-path }}/app-release.apk archive/${{ inputs.apk-name }}
-        mv ${{ inputs.aab-path }}/app-release.apk archive/${{ inputs.aab-name }}
-      shell: bash
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -133,13 +128,19 @@ runs:
       env:
         SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }}
       if: always()
+    - name: Change File Name
+      run: |
+        mkdir artifacts
+        mv ${{ inputs.apk-path }}/app-release.apk artifacts/${{ inputs.apk-name }}
+        mv ${{ inputs.aab-path }}/app-release.apk artifacts/${{ inputs.aab-name }}
+      shell: bash
     - uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.apk-name }}
-        path: archive/*.*
+        path: artifacts/*.*
     - name: Slack Upload Artifacts
       uses: MeilCli/slack-upload-file@v3
       with:
         slack_token: ${{ inputs.slack-token }}
         channel_id: ${{ inputs.slack-channel-id }}
-        file_path: 'archive/*.*'
+        file_path: 'artifacts/*.*'
