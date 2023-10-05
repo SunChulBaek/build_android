@@ -132,7 +132,7 @@ runs:
       run: |
         mkdir artifacts
         mv ${{ inputs.apk-path }}/app-release.apk artifacts/${{ inputs.apk-name }}
-        mv ${{ inputs.aab-path }}/app-release.apk artifacts/${{ inputs.aab-name }}
+        mv ${{ inputs.aab-path }}/app-release.aab artifacts/${{ inputs.aab-name }}
       shell: bash
     - uses: actions/upload-artifact@v3
       with:
