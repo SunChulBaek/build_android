@@ -86,6 +86,9 @@ inputs:
   aab-name:
     description: "aab name"
     required: true
+  artifact-name:
+    description: "artifact name"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -136,7 +139,7 @@ runs:
       shell: bash
     - uses: actions/upload-artifact@v3
       with:
-        name: ${{ inputs.apk-name }}
+        name: ${{ inputs.artifact-name }}
         path: artifacts/*.*
     - name: Slack Upload Artifacts
       uses: MeilCli/slack-upload-file@v3
