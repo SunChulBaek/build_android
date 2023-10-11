@@ -107,11 +107,13 @@ runs:
       run: yarn install
       shell: bash
     - uses: actions/setup-java@v3
+      if: ${{ inputs.react-native != 'true' }}
       with:
         distribution: ${{ inputs.java-distribution }}
         java-version: ${{ inputs.java-version }}
         cache: "gradle"
     - uses: android-actions/setup-android@v2
+      if: ${{ inputs.react-native != 'true' }}
     - run: |
         sudo chmod +x ${{ inputs.android-home }}/gradlew
       shell: bash
@@ -127,10 +129,12 @@ runs:
     - run: |
         cd ${{ inputs.android-home }}
         ./gradlew androidDependencies
+      if: ${{ inputs.react-native != 'true' }}
       shell: bash
     - run: |
         cd ${{ inputs.android-home }}
         ./gradlew dependencyUpdates -Drevision=${{ inputs.revision }} -DoutputFormatter=${{ inputs.format }}
+      if: ${{ inputs.react-native != 'true' }}
       shell: bash
     - run: |
         echo applicationId=${{ inputs.application-id }} > ${{ inputs.android-home }}/${{ inputs.build-properties }}
