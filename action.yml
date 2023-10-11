@@ -7,6 +7,10 @@ inputs:
   java-version:
     description: "java version"
     required: true
+  android-home:
+    description: "android home"
+    required: false
+    default: "."
   base64-keystore:
     description: "base64 keystore"
     required: true
@@ -99,6 +103,8 @@ runs:
         java-version: ${{ inputs.java-version }}
         cache: "gradle"
     - uses: android-actions/setup-android@v2
+    - run: cd ${{ inputs.android-home }}
+      shell: bash
     - run: sudo chmod +x ./gradlew
       shell: bash
     - run: |
