@@ -1,6 +1,11 @@
 name: "Build Android"
 description: "안드로이드 빌드, 아티팩트 업로드, 슬랙으로 결과 전송"
 inputs:
+  react-native:
+    description: "build react native"
+    type: boolean
+    required: false
+    default: false
   java-distribution:
     description: "java distribution"
     required: true
@@ -97,6 +102,9 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v3
+    - name: yarn install
+      if: ${{ inputs.react-native == 'true' }}
+      run: yarn install
     - uses: actions/setup-java@v3
       with:
         distribution: ${{ inputs.java-distribution }}
