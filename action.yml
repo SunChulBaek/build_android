@@ -105,6 +105,7 @@ runs:
     - name: yarn install
       if: ${{ inputs.react-native == 'true' }}
       run: yarn install
+      shell: bash
     - uses: actions/setup-java@v3
       with:
         distribution: ${{ inputs.java-distribution }}
