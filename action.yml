@@ -103,8 +103,6 @@ runs:
         java-version: ${{ inputs.java-version }}
         cache: "gradle"
     - uses: android-actions/setup-android@v2
-    - run: cd ${{ inputs.android-home }}
-      shell: bash
     - run: sudo chmod +x ./gradlew
       shell: bash
     - run: |
