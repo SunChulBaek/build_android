@@ -103,7 +103,8 @@ runs:
         java-version: ${{ inputs.java-version }}
         cache: "gradle"
     - uses: android-actions/setup-android@v2
-    - run: sudo chmod +x ${{ inputs.android-home }}/gradlew
+    - run: |
+        sudo chmod +x ${{ inputs.android-home }}/gradlew
       shell: bash
     - run: |
         echo ${{ inputs.base64-keystore }} | base64 -d > ${{ inputs.android-home }}/${{ inputs.keystore-location }}
@@ -114,9 +115,13 @@ runs:
         echo "releaseKeyStore=${{ inputs.keystore }}" >> ${{ inputs.android-home }}/${{ inputs.keystore-properties }}
         echo "releaseStorePassword=${{ inputs.release-store-password }}" >> ${{ inputs.android-home }}/${{ inputs.keystore-properties }}
       shell: bash
-    - run: ${{ inputs.android-home }}/gradlew androidDependencies
+    - run: |
+        cd ${{ inputs.android-home }}
+        ./gradlew androidDependencies
       shell: bash
-    - run: ${{ inputs.android-home }}/gradlew dependencyUpdates -Drevision=${{ inputs.revision }} -DoutputFormatter=${{ inputs.format }}
+    - run: |
+        cd ${{ inputs.android-home }}
+        ./gradlew dependencyUpdates -Drevision=${{ inputs.revision }} -DoutputFormatter=${{ inputs.format }}
       shell: bash
     - run: |
         echo applicationId=${{ inputs.application-id }} > ${{ inputs.android-home }}/${{ inputs.build-properties }}
@@ -126,7 +131,9 @@ runs:
         echo versionCode=${{ inputs.version-code }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionName=${{ inputs.version-name }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
       shell: bash
-    - run: ${{ inputs.android-home }}/gradlew assembleRelease bundleRelease
+    - run: |
+        cd ${{ inputs.android-home }}
+        ./gradlew assembleRelease bundleRelease
       shell: bash
     - uses: 8398a7/action-slack@v3
       with:
