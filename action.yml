@@ -1,7 +1,7 @@
 name: "Build Android"
 description: "안드로이드 빌드, 아티팩트 업로드, 슬랙으로 결과 전송"
 inputs:
-  react-native:
+  build-react-native:
     description: "build react native"
     type: boolean
     required: false
@@ -89,31 +89,29 @@ inputs:
     description: "aab path"
     required: false
     default: "app/build/outputs/bundle/release"
-  apk-name:
-    description: "apk name"
-    required: true
-  aab-name:
-    description: "aab name"
-    required: true
   artifact-name:
     description: "artifact name"
     required: true
+  artifact-path:
+    description: "artifact path"
+    required: false
+    default: "artifacts"
 runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v3
     - name: yarn install
-      if: ${{ inputs.react-native == 'true' }}
+      if: ${{ inputs.build-react-native == 'true' }}
       run: yarn install
       shell: bash
     - uses: actions/setup-java@v3
-      if: ${{ inputs.react-native != 'true' }}
+      if: ${{ inputs.build-react-native != 'true' }}
       with:
         distribution: ${{ inputs.java-distribution }}
         java-version: ${{ inputs.java-version }}
         cache: "gradle"
     - uses: android-actions/setup-android@v2
-      if: ${{ inputs.react-native != 'true' }}
+      if: ${{ inputs.build-react-native != 'true' }}
     - run: |
         sudo chmod +x ${{ inputs.android-home }}/gradlew
       shell: bash
@@ -129,12 +127,12 @@ runs:
     - run: |
         cd ${{ inputs.android-home }}
         ./gradlew androidDependencies
-      if: ${{ inputs.react-native != 'true' }}
+      if: ${{ inputs.build-react-native != 'true' }}
       shell: bash
     - run: |
         cd ${{ inputs.android-home }}
         ./gradlew dependencyUpdates -Drevision=${{ inputs.revision }} -DoutputFormatter=${{ inputs.format }}
-      if: ${{ inputs.react-native != 'true' }}
+      if: ${{ inputs.build-react-native != 'true' }}
       shell: bash
     - run: |
         echo applicationId=${{ inputs.application-id }} > ${{ inputs.android-home }}/${{ inputs.build-properties }}
@@ -157,17 +155,17 @@ runs:
       if: always()
     - name: Change File Name
       run: |
-        mkdir artifacts
-        mv ${{ inputs.android-home }}/${{ inputs.apk-path }}/app-release.apk artifacts/${{ inputs.apk-name }}
-        mv ${{ inputs.android-home }}/${{ inputs.aab-path }}/app-release.aab artifacts/${{ inputs.aab-name }}
+        mkdir ${{ inputs.artifact-path }}
+        mv ${{ inputs.android-home }}/${{ inputs.apk-path }}/app-release.apk ${{ inputs.artifact-path }}/${{ inputs.artifact-name }}.apk
+        mv ${{ inputs.android-home }}/${{ inputs.aab-path }}/app-release.aab ${{ inputs.artifact-path }}/${{ inputs.artifact-name }}.aab
       shell: bash
     - uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.artifact-name }}
-        path: artifacts/*.*
+        path: ${{ inputs.artifact-path }}/*.*
     - name: Slack Upload Artifacts
       uses: MeilCli/slack-upload-file@v3
       with:
         slack_token: ${{ inputs.slack-token }}
         channel_id: ${{ inputs.slack-channel-id }}
-        file_path: 'artifacts/*.*'
+        file_path: '${{ inputs.artifact-path }}/*.*'
