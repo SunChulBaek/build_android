@@ -10,12 +10,6 @@
     * SLACK_WEBHOOK_URL
   * vars:
     * APK_NAME
-* 글로벌 build.gradle.kts에 추가
-```
-plugins {
-    id("com.github.ben-manes.versions") version "0.51.0"
-}
-```
 * 앱 build.gradle.kts에 추가 (0)
 ```
     val buildPropFile = rootProject.file("build.properties")
