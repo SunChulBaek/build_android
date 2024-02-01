@@ -64,3 +64,7 @@ defaultConfig {
 versionCode=1
 versionName=1.0.0
 ```
+* README에 뱃지 추가
+```
+![Build Badge](https://github.com/SunChulBaek/Cokedex/actions/workflows/main.yml/badge.svg)
+```
