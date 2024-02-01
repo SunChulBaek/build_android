@@ -1,7 +1,6 @@
 깃헙에서 새 리포지터리 생성하는 경우 세팅 해야 할 것들 (기존의 내 템플릿 프로젝트X)
 * 리포지터리 세팅에서 정의 해야 할 것
   * secrets:
-    * APP_ID
     * BASE64_KEYSTORE
     * RELEASE_KEY_ALIAS
     * RELEASE_KEY_PASSWORD
@@ -28,11 +27,7 @@ plugins {
 ```
 * 앱 build.gradle.kts에 추가 (1)
 ```
-compileSdk = buildProperties.getProperty("compileSdk").toInt()
 defaultConfig {
-    applicationId = buildProperties.getProperty("applicationId")
-    minSdk = buildProperties.getProperty("minSdk").toInt()
-    targetSdk = buildProperties.getProperty("targetSdk").toInt()
     versionCode = buildProperties.getProperty("versionCode").toInt()
     versionName = buildProperties.getProperty("versionName")
 }
