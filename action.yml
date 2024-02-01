@@ -118,11 +118,6 @@ runs:
       if: ${{ inputs.build-react-native != 'true' }}
       shell: bash
     - run: |
-        cd ${{ inputs.android-home }}
-        ./gradlew dependencyUpdates -Drevision=${{ inputs.revision }} -DoutputFormatter=${{ inputs.format }}
-      if: ${{ inputs.build-react-native != 'true' }}
-      shell: bash
-    - run: |
         echo versionCode=${{ inputs.version-code }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionName=${{ inputs.version-name }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
       shell: bash
