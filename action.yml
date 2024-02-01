@@ -52,18 +52,6 @@ inputs:
     description: "build properties"
     required: false
     default: "build.properties"
-  application-id:
-    description: "application id"
-    required: true
-  compile-sdk:
-    description: "compile sdk"
-    required: true
-  min-sdk:
-    description: "compile sdk"
-    required: true
-  target-sdk:
-    description: "compile sdk"
-    required: true
   version-code:
     description: "version code"
     required: false
@@ -135,10 +123,6 @@ runs:
       if: ${{ inputs.build-react-native != 'true' }}
       shell: bash
     - run: |
-        echo applicationId=${{ inputs.application-id }} > ${{ inputs.android-home }}/${{ inputs.build-properties }}
-        echo compileSdk=${{ inputs.compile-sdk }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
-        echo minSdk=${{ inputs.min-sdk }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
-        echo targetSdk=${{ inputs.target-sdk }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionCode=${{ inputs.version-code }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionName=${{ inputs.version-name }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
       shell: bash
