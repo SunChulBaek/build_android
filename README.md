@@ -59,3 +59,8 @@ defaultConfig {
         }
     }
 ```
+* build.properties 파일 추가
+```
+versionCode=1
+versionName=1.0.0
+```
