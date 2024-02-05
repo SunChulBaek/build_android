@@ -64,6 +64,7 @@ inputs:
   slack-webhook-url:
     description: "slack webhook url"
     required: false
+    default: "."
   slack-channel-id:
     description: "slack channel id"
     required: false
@@ -123,7 +124,7 @@ runs:
         cd ${{ inputs.android-home }}
         ./gradlew assembleRelease bundleRelease
       shell: bash
-    - if: ${{ inputs.slack-webhook-url != '' }} && always()
+    - if: ${{ inputs.slack-webhook-url != '.' }} && always()
       uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -140,8 +141,8 @@ runs:
       with:
         name: ${{ inputs.artifact-name }}
         path: ${{ inputs.artifact-path }}/*.*
-    - if: ${{ inputs.slack-token == '' }} || {{ inputs.slack-channel-id == '' }}
-      name: Slack Upload Artifacts
+    - name: Slack Upload Artifacts
+      if: ${{ inputs.slack-token != '' }} && {{ inputs.slack-channel-id != '' }}
       uses: MeilCli/slack-upload-file@v3
       with:
         slack_token: ${{ inputs.slack-token }}
