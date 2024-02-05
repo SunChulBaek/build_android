@@ -3,9 +3,7 @@ description: "안드로이드 빌드, 아티팩트 업로드, 슬랙으로 결�
 inputs:
   build-react-native:
     description: "build react native"
-    type: boolean
     required: false
-    default: false
   java-distribution:
     description: "java distribution"
     required: true
@@ -62,13 +60,13 @@ inputs:
     default: "1.0.0"
   slack-token:
     description: "slack token"
-    required: true
+    required: false
   slack-webhook-url:
     description: "slack webhook url"
-    required: true
+    required: false
   slack-channel-id:
     description: "slack channel id"
-    required: true
+    required: false
   apk-path:
     description: "apk path"
     required: false
@@ -131,7 +129,7 @@ runs:
         fields: repo,message,ref # repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest # selectable (default: repo,message)
       env:
         SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }}
-      if: always()
+      if: ${{ inputs.slack-webhook-url != '' }} && always()
     - name: Change File Name
       run: |
         mkdir ${{ inputs.artifact-path }}
@@ -148,3 +146,4 @@ runs:
         slack_token: ${{ inputs.slack-token }}
         channel_id: ${{ inputs.slack-channel-id }}
         file_path: '${{ inputs.artifact-path }}/*.*'
+      if: ${{ inputs.slack-token == '' }} || {{ inputs.slack-channel-id == '' }}
