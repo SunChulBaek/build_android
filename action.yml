@@ -124,7 +124,7 @@ runs:
         cd ${{ inputs.android-home }}
         ./gradlew assembleRelease bundleRelease
       shell: bash
-    - if: ${{ inputs.slack-webhook-url != '.' }}
+    - if: ${{ inputs.slack-webhook-url != '.' }} && always()
       uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
