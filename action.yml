@@ -3,9 +3,7 @@ description: "안드로이드 빌드, 아티팩트 업로드, 슬랙으로 결�
 inputs:
   build-react-native:
     description: "build react native"
-    type: boolean
     required: false
-    default: false
   java-distribution:
     description: "java distribution"
     required: true
@@ -62,13 +60,16 @@ inputs:
     default: "1.0.0"
   slack-token:
     description: "slack token"
-    required: true
+    required: false
+    default: "."
   slack-webhook-url:
     description: "slack webhook url"
-    required: true
+    required: false
+    default: "."
   slack-channel-id:
     description: "slack channel id"
-    required: true
+    required: false
+    default: "."
   apk-path:
     description: "apk path"
     required: false
@@ -125,13 +126,13 @@ runs:
         cd ${{ inputs.android-home }}
         ./gradlew assembleRelease bundleRelease
       shell: bash
-    - uses: 8398a7/action-slack@v3
+    - if: ${{ inputs.slack-webhook-url != '.' }}
+      uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
         fields: repo,message,ref # repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest # selectable (default: repo,message)
       env:
         SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }}
-      if: always()
     - name: Change File Name
       run: |
         mkdir ${{ inputs.artifact-path }}
@@ -143,6 +144,7 @@ runs:
         name: ${{ inputs.artifact-name }}
         path: ${{ inputs.artifact-path }}/*.*
     - name: Slack Upload Artifacts
+      if: ${{ inputs.slack-token != '.' && inputs.slack-channel-id != '.' }}
       uses: MeilCli/slack-upload-file@v3
       with:
         slack_token: ${{ inputs.slack-token }}
