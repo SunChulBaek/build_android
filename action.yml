@@ -61,6 +61,7 @@ inputs:
   slack-token:
     description: "slack token"
     required: false
+    default: "."
   slack-webhook-url:
     description: "slack webhook url"
     required: false
@@ -68,6 +69,7 @@ inputs:
   slack-channel-id:
     description: "slack channel id"
     required: false
+    default: "."
   apk-path:
     description: "apk path"
     required: false
@@ -142,7 +144,7 @@ runs:
         name: ${{ inputs.artifact-name }}
         path: ${{ inputs.artifact-path }}/*.*
     - name: Slack Upload Artifacts
-      if: ${{ inputs.slack-token != '' }} && {{ inputs.slack-channel-id != '' }}
+      if: ${{ inputs.slack-token != '.' }} && {{ inputs.slack-channel-id != '.' }}
       uses: MeilCli/slack-upload-file@v3
       with:
         slack_token: ${{ inputs.slack-token }}
