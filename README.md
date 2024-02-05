@@ -5,9 +5,9 @@
     * RELEASE_KEY_ALIAS
     * RELEASE_KEY_PASSWORD
     * RELEASE_STORE_PASSWORD
-    * SLACK_CHANNEL_ID : 슬랙으로 파일업로드
-    * SLACK_TOKEN : 슬랙으로 파일업로드
-    * SLACK_WEBHOOK_URL : 슬랙으로 결과 알려줌
+    * SLACK_WEBHOOK_URL : Optional. 슬랙으로 결과 알려줌
+    * SLACK_CHANNEL_ID : Optional. 슬랙으로 파일업로드
+    * SLACK_TOKEN : Optional. 슬랙으로 파일업로드
   * vars:
     * APK_NAME
 * 앱 build.gradle.kts에 추가 (0)

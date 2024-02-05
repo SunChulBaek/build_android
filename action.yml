@@ -58,12 +58,12 @@ inputs:
     description: "version name"
     required: false
     default: "1.0.0"
-  slack-token:
-    description: "slack token"
-    required: false
-    default: "."
   slack-webhook-url:
     description: "slack webhook url"
+    required: false
+    default: "."
+  slack-token:
+    description: "slack token"
     required: false
     default: "."
   slack-channel-id:
