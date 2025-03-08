@@ -119,8 +119,8 @@ runs:
       if: ${{ inputs.build-react-native != 'true' }}
       shell: bash
     - run: |
-        echo "\nversionCode=${{ inputs.version-code }}" >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
-        echo "\nversionName=${{ inputs.version-name }}" >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
+        echo -e "\nversionCode=${{ inputs.version-code }}" >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
+        echo -e "\nversionName=${{ inputs.version-name }}" >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         cat ${{ inputs.android-home }}/${{ inputs.build-properties }}
       shell: bash
     - run: |
