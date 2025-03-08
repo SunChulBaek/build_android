@@ -119,6 +119,7 @@ runs:
       if: ${{ inputs.build-react-native != 'true' }}
       shell: bash
     - run: |
+        sed '5,6d' ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionCode=${{ inputs.version-code }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionName=${{ inputs.version-name }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
       shell: bash
