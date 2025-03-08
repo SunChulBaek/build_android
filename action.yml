@@ -122,6 +122,7 @@ runs:
         sed '5,6d' ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionCode=${{ inputs.version-code }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo versionName=${{ inputs.version-name }} >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
+        cat ${{ inputs.android-home }}/${{ inputs.build-properties }}
       shell: bash
     - run: |
         cd ${{ inputs.android-home }}
