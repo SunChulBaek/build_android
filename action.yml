@@ -121,7 +121,6 @@ runs:
     - run: |
         echo -e "\nversionCode=${{ inputs.version-code }}" >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
         echo -e "\nversionName=${{ inputs.version-name }}" >> ${{ inputs.android-home }}/${{ inputs.build-properties }}
-        cat ${{ inputs.android-home }}/${{ inputs.build-properties }}
       shell: bash
     - run: |
         cd ${{ inputs.android-home }}
